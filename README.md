@@ -1,4 +1,4 @@
-_2014_2_7_Musik_SoundControl_SerialProtocol
+2014-2-7-Musik-SoundControl-SerialProtocol
 ===========================================
 Musik and Light control board belongs to the project “Waagschalspiel”
 for Leuchtenburg.
