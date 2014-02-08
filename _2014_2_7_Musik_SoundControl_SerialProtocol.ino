@@ -6,8 +6,8 @@
  * Volume of 6 Channel of the sound effect (6 different sound effect for different speed of 
  * motors).
  * Msg. format: "start;", "stop;", "blink A100 B100;"
- * Edit: 7 Feb. 2014
- *
+ * 
+ * Edit: 8 Feb. 2014
  * Writen by Su Gao
  */
  
