@@ -159,10 +159,10 @@ void sound(){ //TODO: move setVolume in else statement, don't let it always send
       
       SetVolume(i+1, /*VolumeNow[i]*/Volume[i]);
       BlendTimeOld = millis();
-      //Serial.print(Volume[i]);
-      //Serial.print(" ");
+      Serial.print(Volume[i]); //display the channel Volume
+      Serial.print(F(" "));
     }
-    //Serial.println();
+    Serial.println();
   }  
 }
 

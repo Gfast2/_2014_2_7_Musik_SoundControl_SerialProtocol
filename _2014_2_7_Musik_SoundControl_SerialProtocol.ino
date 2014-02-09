@@ -291,23 +291,25 @@ long calSpeed(int MotorNum){  //the motor number
 //Decide which sound should be the loudest sound from the 6 channel
 //this sound should be direct setted louder and the other 5 direct
 //much smaller
-int soundDecider(long MSpeed){ //the acutale maximum speed of four motors right now
+int soundDecider(long MSpeed, int motorNum){ //the acutale maximum speed of four motors right now
   //six level for each sound effect channel.The faster the speed is, the bigger is the number.
   int Stufer = 0;
-  if(MSpeed < 3000) { //Unit: Hz
+  int k = motorNum - 1; //get the programm easier to read
+  MSpeed = abs(MSpeed); //Unit: Hz
+  
+  if(MSpeed < SpedMax[k] * 0.16)
     Stufer = 0;
-  } else if(MSpeed < 4000) {    
+  else if(MSpeed < SpedMax[k] * 0.32)
     Stufer = 1;
-  } else if(MSpeed < 5000) {    
+  else if(MSpeed < SpedMax[k] * 0.48)
     Stufer = 2;
-  } else if(MSpeed < 6000) {    
+  else if(MSpeed < SpedMax[k] * 0.64)
     Stufer = 3;
-  } else if(MSpeed < 7000) {    
+  else if(MSpeed < SpedMax[k] * 0.80)
     Stufer = 4;
-  } else if(MSpeed > 6999) {    
-    Stufer = 5;  
+  else{
+    Stufer = 5;
   }
- 
   return Stufer;
 }
 
@@ -356,10 +358,10 @@ void motorRoutine(){
   //update the motor speed each loop
   for(int i=1; i<5; i++){  
     calSpeed(i);
-    Serial.print(Sped[i-1]); //display the speed that calculated
-    Serial.print(F(" "));
+    //Serial.print(Sped[i-1]); //display the speed that calculated
+    //Serial.print(F(" "));
   }
-  Serial.println();
+  //Serial.println();
 
   motorStateAll_Old = motorStateAll; //update the state of all the motors    
 }
@@ -409,7 +411,7 @@ void processCommand(){
     }
   }
   else if(!strncmp(buffer,"stop",4)) {
-    Serial.println("Song stopped");
+    Serial.println(F("Song stopped"));
     StopSong();
   }
   //  else if(!strncmp(buffer,"config",6)){
