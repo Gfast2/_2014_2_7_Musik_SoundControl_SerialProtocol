@@ -7,6 +7,7 @@
  * motors).
  * Msg. format: "start;", "stop;", "blink A100 B100;"
  * 
+ *
  * Edit: 8 Feb. 2014
  * Writen by Su Gao
  */
@@ -143,7 +144,7 @@ double pnoise(double x, double y, double z)
   lerp(u, grad(P(AB  ), x, y-1, z),        /* RESULTS */
   grad(P(BB  ), x-1, y-1, z))),       /* FROM  8 */
   lerp(v, lerp(u, grad(P(AA+1), x, y, z-1),  /* CORNERS */
-  grad(P(BA+1), x-1, y, z-1)),          /* OF CUBE */
+  grad(P(BA+1), x-1, y, z-1)),          /* OF CUBE\ */
   lerp(u, grad(P(AB+1), x, y-1, z-1),
   grad(P(BB+1), x-1, y-1, z-1))));
 }
