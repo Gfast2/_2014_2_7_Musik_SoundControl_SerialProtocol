@@ -139,6 +139,14 @@ void Blender(int Channel, int TargetVolume, int BlendspeedSet){
  }
  */
 
+/*
+Start Wert: fest,0x86
+ Device ID: 0 ... 255
+ Kommando: xx
+ Parameter 1
+ Parameter 2
+ Checksumme (CRC)
+ */
 
 
 void sound(){ //TODO: move setVolume in else statement, don't let it always send Serial Data. Easy to crash the Musik shiled.

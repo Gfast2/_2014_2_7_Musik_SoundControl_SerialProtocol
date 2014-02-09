@@ -1,20 +1,25 @@
-/* This code can control Light control board and Musik Shield. 
- * It's derived from _2013_12_12_Musik_SoundControl_SerialProtocol.
+/* This code is the firmare for Light and Music control board.
+ * It's derived from file _2013_12_12_Musik_SoundControl_SerialProtocol.
+ *
  * Add new meta protocol part to parse "motor start","motor stop","motor change direction"
  * and "motor acceleration" commands. And throught the motorRoutine() function calculate the 
  * actual speed of each motor. And throught the actual speed of each motor calculate the
  * Volume of 6 Channel of the sound effect (6 different sound effect for different speed of 
  * motors).
- * Msg. format: "start;", "stop;", "blink A100 B100;"
+ * Message example: "start;", "stop;", "blink A100 B100;"
  * 
  *
- * Edit: 8 Feb. 2014
+ * Edit: 9 Feb. 2014
  * Writen by Su Gao
  */
  
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>  // for type definitions
+
+////////////////////////
+///////VARIABLE/////////
+////////////////////////
 // called this way, it uses the default address 0x40
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
@@ -34,14 +39,6 @@ SoftwareSerial MusikSerial(11,12); //rx, tx
 #define fastSpeed 10
 #define middleSpeed 30
 #define slowSpeed 60
-/*
-Start Wert: fest,0x86
- Device ID: 0 ... 255
- Kommando: xx
- Parameter 1
- Parameter 2
- Checksumme (CRC)
- */
 
 byte Message[6]={
   0x86, 0x01, 0x02, 0x01, 0x1F, 0x00};
@@ -87,6 +84,9 @@ unsigned long motorMoveTime_Old[4] = {  //motor moving time totally after start 
 long Sped[4] = {  
   0,0,0,0};
 
+////////////////////////
+///////METHODE//////////
+////////////////////////
 static const byte p[] = {
   151,160,137,91,90, 15,131, 13,201,95,96,
   53,194,233, 7,225,140,36,103,30,69,142, 8,99,37,240,21,10,23,190, 6,
@@ -324,10 +324,8 @@ int soundDecider(long MSpeed, int motorNum){ //the acutale maximum speed of four
 //change sound volume
 void motorSoundBlender(int channel,int volum, long blendSpeed){ //channel start from 0
   int voltranslater; //translate the volume from volum to volume for music board
-  if(volum == 4) {//for motor same time play the same volum
+  if(volum == 4)//for motor same time play the same volum
     voltranslater = 0; //play the loudest sound
-    Serial.println(F("volum=4"));
-  }
   else if(volum == 3)
     voltranslater = 5; //play less loud
   else if(volum == 2)
@@ -809,7 +807,9 @@ void kerzeSim(){
   //  Serial.println();
 }
 
-//----------------------------------
+////////////////////////
+/////////SETUP//////////
+////////////////////////
 void setup(){
   //Serial.begin(115200);
   Serial.begin(38400); //try the functionality so use a safer speed.
@@ -826,11 +826,13 @@ void setup(){
   TWBR = 12; // upgrade to 400KHz!
 
   MusikSerial.begin(115200); //Musik Bautrate 11520, Device ID: 1
-  SetVolume(0,1);
+  SetVolume(0,1); //turn all channel volum back to max.
   PlaySong(2);  
 }
 
-//----------------------------------
+////////////////////////
+/////////LOOP///////////
+////////////////////////
 void loop() {
 
   // See: http://www.marginallyclever.com/2011/10/controlling-your-arduino-through-the-serial-monitor/
@@ -865,28 +867,18 @@ void loop() {
    }
    */
 
-  if(LEDState == KerzeSim){
+  if(LEDState == KerzeSim)
     kerzeSim();
-  }
-  else if(LEDState == Blink){
+  else if(LEDState == Blink)
     kerzeBlink();
-  }
-  else if(LEDState == ON){
+  else if(LEDState == ON)
     kerzeON();
-  }
-  else if(LEDState == OFF){
+  else if(LEDState == OFF)
     kerzeOFF();
-  }
   
   motorRoutine();
   sound();
 }
-
-
-
-
-
-
 
 
 
