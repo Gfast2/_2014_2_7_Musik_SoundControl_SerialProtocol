@@ -50,7 +50,7 @@ byte CRC, Channel, Volume;
 int VolumeNow[8] = { //0-255, Max-0, Min-255, Volume of each channel
   0,0,0,0,0,0,0,0}; 
 int SoundBlendSpeed[8] = { //sound blend speed of each channel
-  6,6,6,6,6,6,6,6};
+  5,5,5,5,5,5,5,5};
   
 int motorState[4] = { //motor state. '1' - motor moving, '0' - motor stopped
   0,0,0,0};
@@ -313,15 +313,23 @@ int soundDecider(long MSpeed, int motorNum){ //the acutale maximum speed of four
   return Stufer;
 }
 
-//Blend the targeted Channel louder and the untargeted Channel moute
-void motorSoundBlender(int Stufer, long blendSpeed){ //which channel to blend loud & how fast should be blended
-  VolumeNow[Stufer] = 0; //the Channel that should be heared now
-  for(int i=0; i<7; i++){
-    SoundBlendSpeed[i] = blendSpeed;
-    if(i != Stufer){
-      VolumeNow[i] = 100; //set the other motor sound effect Channel mute.
-    }
+//change sound volume
+void motorSoundBlender(int channel,int volum, long blendSpeed){ //channel start from 0
+  int voltranslater; //translate the volume from volum to volume for music board
+  if(volum == 4) {//for motor same time play the same volum
+    voltranslater = 0; //play the loudest sound
+    Serial.println(F("volum=4"));}
+  else if(volum == 3)
+    voltranslater = 5; //play less loud
+  else if(volum == 2)
+    voltranslater = 10;
+  else if(volum == 1)
+    voltranslater = 15; //even gentler
+  else{
+    voltranslater = 60; //motor play very very small sound
   }  
+  VolumeNow[channel] = voltranslater;
+  SoundBlendSpeed[channel] = blendSpeed;
 }
 
 //When all motors do not move, stop the sound directicaly
@@ -332,38 +340,41 @@ void stopSound(){
   }
 }
 
-
+//----------------------------------------------------
 //update the motor status in each loop
-void motorRoutine(){
-  /*
-  motorStateAll = motorStartStop(motorState);
-  
-  if(motorStateAll == 1 && motorStateAll_Old == 0){  //motor start to move    
-    
-  }
-
-  else if(motorStateAll == 0 && motorStateAll_Old == 1){  //motor stop to move
-    stopSound();
-  }
-  
-  if(motorStateAll == 1){  //when any motor is still moving
-    int Tone = soundDecider(1000); //TODO: finde way to get the acutal Max speed of four motor right now
-    motorSoundBlender(Tone,1000); //TODO: find way to get the blendSpeed
-  }
-  }
-  else if(motorStateAll == 0){  //when all motor stopped
-  }
-  */
+void motorRoutine(){  
+  static int ch[4] = { //save which channel should be played for this loop for this motor
+    0,0,0,0};
   
   //update the motor speed each loop
   for(int i=1; i<5; i++){  
-    calSpeed(i);
+    calSpeed(i);    
     //Serial.print(Sped[i-1]); //display the speed that calculated
     //Serial.print(F(" "));
+    ch[i] = soundDecider(Sped[i-1],i); //got which channel to be play for this motor
   }
   //Serial.println();
-
-  motorStateAll_Old = motorStateAll; //update the state of all the motors    
+  
+  int vol[6] = { //init & save the volumn of first 6 channel that save motor sound effect
+    0,0,0,0,0,0};
+  for(int i=0; i<4; i++){
+    if(ch[i] == 0)
+      vol[0]++;    
+    else if(ch[i] == 1)
+      vol[1]++;
+    else if(ch[i] == 2)
+      vol[2]++;
+    else if(ch[i] == 3)
+      vol[3]++;
+    else if(ch[i] == 4)
+      vol[4]++;
+    else if(ch[i] == 5)
+      vol[5]++;      
+  }
+  
+  for(int i=0; i<6; i++){
+    motorSoundBlender(i, vol[i], 5); //20 as blendspeed is only for test perpose
+  }
 }
 
 
